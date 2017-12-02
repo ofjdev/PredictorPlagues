@@ -23,7 +23,7 @@ quit = False
 ciclos_plaga = 10
 
 class cultiu():
-    def __init__(self, x, y, n_x = 2, n_y = 2):
+    def __init__(self, x, y, n_x = 1, n_y = 1):
         self.x = x
         self.y = y
         self.n_x = n_x
@@ -47,12 +47,12 @@ class cultiu():
 
     def incr_ciclo_plaga_vecina(self, ciclos):
         self.contador_plaga += ciclos
-        if self.contador_plaga == ciclos_plaga:
+        if self.contador_plaga > ciclos_plaga:
             self.plagar()
 
 class mapa_camps():
     global pygame
-    def __init__(self, camps, camps_x, camps_y, width_square = 40):
+    def __init__(self, camps, camps_x, camps_y, width_square = 30):
         
         self.files_canal_ppal = 2 # quants requadres ocupa el canal ppal
         self.files_desaigue_ppal = 0
@@ -109,9 +109,9 @@ class mapa_camps():
     def pinta_canals(self):
         for i in range(self.camps_x*2):
             self.pinta_quadrat_color(blueP, self.width_square * i, 0)
-            self.screen.blit(pygame.font.Font(None, 32).render("==>", True, WHITE), [self.width_square * i, 0])
+            self.screen.blit(pygame.font.Font(None, 26).render("=>", True, WHITE), [self.width_square * i, 0])
             self.pinta_quadrat_color(blueP, self.width_square * i, self.width_square)
-            self.screen.blit(pygame.font.Font(None, 32).render("==>", True, WHITE), [self.width_square * i, self.width_square ])
+            self.screen.blit(pygame.font.Font(None, 26).render("=>", True, WHITE), [self.width_square * i, self.width_square ])
 
 
 
@@ -122,11 +122,13 @@ class mapa_camps():
 
 mapa = {
     'camps': [],
-    'rius': []
 }
 
-n_camps_x = 8
-n_camps_y = 7
+n_camps_x = 18
+n_camps_y = 10
+
+#for j in range(0, n_camps_y):
+#    mapa['camps'].append(cultiu()) # riu
 
 for i in range(0, n_camps_x):
     array = []
@@ -222,8 +224,18 @@ def event_incr_cicle():
 
     for pap in lista_de_puntos_a_plagar:
         x = pap[0]; y = pap[1]
-        mapa['camps'][x][y].plagar()
+        cultivo = mapa['camps'][x][y]
+        cultivo.incr_ciclo_plaga_vecina(3)
 
+#        mapa['camps'][x][y].plagar()
+
+    for rx in range(n_camps_x):
+        cultiu = mapa['camps'][rx][0]
+        if cultiu.cultiu_plagat:
+            for cx in range(n_camps_x):
+                cultiu_a_plagar = mapa['camps'][cx][0]
+                cultiu_a_plagar.incr_ciclo_plaga_vecina(3)
+            break
     #map_camps = mapa_copy
 
     pygame.display.flip()
