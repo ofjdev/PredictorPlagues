@@ -53,16 +53,29 @@ class mapa_camps():
                 else:
                     color_to_fill = green2
 
-                
-                pygame.draw.rect(self.screen, color_to_fill, [i, j, self.eff_sq_wdth, self.eff_sq_wdth], 0)
+                self.pinta_quadrat_color(color_to_fill, i, j)
                 Ty += 1
             Tx += 1
             Ty = 0
 
+    def pinta_quadrat_color(self, color, x, y):
+        #print "x = "+str(x)
+        #print "y = "+str(y)
+        #print "eff_sq="+str(self.eff_sq_wdth)
+        pygame.draw.rect(self.screen, color, [x, y, self.eff_sq_wdth, self.eff_sq_wdth], 0)
+
+    def get_x_coord_camp(self, camp, offset_x, offset_y):
+        return ( (camp.x * 2 + offset_x ) * self.width_square +1 , (camp.y * 2 + offset_y ) * self.width_square +1 )
+
     def pinta_camp_plagat(self, camp):
-        x = camp.x * 2 * self.width_square + 1
-        y = camp.y * 2 * self.width_square + 1
-        pygame.draw.rect(self.screen, GREY, [x, y, self.eff_sq_wdth, self.eff_sq_wdth], 0)
+        x,y = self.get_x_coord_camp(camp, 0, 0)
+        self.pinta_quadrat_color(GREY, x, y)
+        x,y = self.get_x_coord_camp(camp, 0, 1)
+        self.pinta_quadrat_color(GREY, x, y)
+        x,y = self.get_x_coord_camp(camp, 1, 0)
+        self.pinta_quadrat_color(GREY, x, y)
+        x,y = self.get_x_coord_camp(camp, 1, 1)
+        self.pinta_quadrat_color(GREY, x, y)
 
     def pinta_canals(self):
         pass
