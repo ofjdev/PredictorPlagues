@@ -35,14 +35,14 @@ class mapa_camps():
     global pygame
     def __init__(self, camps, camps_x, camps_y, width_square = 40):
         
-        files_canal_ppal = 2 # quants requadres ocupa el canal ppal
-        files_desaigue_ppal = 2
-        self.x = 0
-        self.y = 0
+        self.files_canal_ppal = 2 # quants requadres ocupa el canal ppal
+        self.files_desaigue_ppal = 2
+        self.camps_x = camps_x
+        self.camps_y = camps_y
         self.camps = camps
         pygame.init()
         self.size_x = camps_x * 2 * width_square
-        self.size_y = (camps_y * 2 + files_canal_ppal + files_desaigue_ppal) * width_square
+        self.size_y = (camps_y * 2 + self.files_canal_ppal + self.files_desaigue_ppal) * width_square
         self.width_square = width_square
         self.eff_sq_wdth = self.width_square - 3
         self.screen = pygame.display.set_mode((self.size_x, self.size_y))
@@ -58,7 +58,6 @@ class mapa_camps():
             j = 1
             for j_camp in i_camp: #range(1, self.size_y, self.width_square):
                 
-
                 x, y = self.get_x_coord_camp(j_camp, 0, 0)
                 self.pinta_camp_color(j_camp, j_camp.color_to_fill)
                 #self.pinta_quadrat_color(color_to_fill, x, y)
@@ -89,7 +88,9 @@ class mapa_camps():
         self.pinta_camp_color(camp, GREY)
 
     def pinta_canals(self):
-        pass
+        for i in range(self.camps_x*2):
+            self.pinta_quadrat_color(blueP, self.width_square * i, 0)
+            self.pinta_quadrat_color(blueP, self.width_square * i, self.width_square)
 
 
 # EXAMPLE TAKEN FROM:
@@ -135,6 +136,8 @@ while not quit:
     camp.pinta_camps_de_verd()
 
     camp.pinta_camp_plagat(mapa['camps'][2][3])
+
+    camp.pinta_canals()
 
     #camp.pinta_canals()
 
