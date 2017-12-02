@@ -2,6 +2,7 @@ import pygame
 import random
 
 from Tkinter import Tk
+from Tkinter import Button
 
 blueP = (20, 34, 238)
 greenP = (20, 240, 50)
@@ -86,8 +87,8 @@ class mapa_camps():
         x,y = self.get_x_coord_camp(camp, 1, 1)
         self.pinta_quadrat_color(color, x, y)        
 
-    def pinta_camp_plagat(self, camp):
-        self.pinta_camp_color(camp, GREY)
+    #def pinta_camp_plagat(self, camp):
+    #    self.pinta_camp_color(camp, GREY)
 
     def pinta_canals(self):
         for i in range(self.camps_x*2):
@@ -118,32 +119,53 @@ for i in range(0, n_camps_x):
         nou_cultiu = cultiu(i, j)
         array.append(nou_cultiu)
 
+
+def render_Map(camp):
+    camp.screen.fill(BLACK)
+
+    camp.pinta_camps_de_verd()
+
+    #camp.pinta_camp_plagat(mapa['camps'][2][3])
+
+    camp.pinta_canals()
+
+    
+    #clock.tick(5)
+
 #while not quit:
 
 #   for event in pygame.event.get():
 #      if event.type == pygame.QUIT:
 #         quit = True
 
-camp = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
+mapa_camps = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
+render_Map(mapa_camps)
 
-camp.screen.fill(BLACK)
+window_control = Tk()
+window_control.geometry("266x208")
+window_control.title("Casos de prova")
 
-camp.pinta_camps_de_verd()
+def new_random(max):
+    return int(random.random() * max)
 
-camp.pinta_camp_plagat(mapa['camps'][2][3])
+def event_inici_plaga():
 
-camp.pinta_canals()
+    x = new_random(n_camps_x)
+    y = new_random(n_camps_y)
 
-#camp.pinta_canals()
+    mapa['camps'][x][y].color_to_fill = GREY
+    
+    render_Map(mapa_camps)
 
-colAl = (random.randrange(1, 255), random.randrange(1, 255), random.randrange(1, 255))
-#pygame.draw.rect(screen, colAl, [x, y, 38, 38], 0)
-pygame.display.flip()
-#clock.tick(5)
+    #mapa_camps.pinta_camp_plagat(mapa['camps'][x][y])
+    
+    pygame.display.flip()
 
-window = Tk()
-window.geometry("266x208")
-window.title("Casos de prova")
-window.mainloop()
+b = Button(window_control, text="Inici Plaga", command=event_inici_plaga)
+b.pack()
+
+window_control.mainloop()
+
+
 
 #pygame.quit()
