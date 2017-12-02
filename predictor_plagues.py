@@ -196,13 +196,15 @@ def event_incr_cicle():
     global map_camps
     #mapa_copy = copy.deepcopy(map_camps)
 
+    lista_de_puntos_a_plagar = []
+
     for x in range(n_camps_x):
         for y in range(n_camps_y):
             cultiu = mapa['camps'][x][y]
             cultiu_plagat = cultiu.cultiu_plagat
             if cultiu_plagat:
                 pass
-                """for xx in range(3):
+                for xx in range(3):
                     
                     for yy in range(3):
                         xx_1 = xx - 1
@@ -212,13 +214,15 @@ def event_incr_cicle():
                         # center
                         # out of bounds
                         # 
-                        if xx_1 + yy_1 > 0 \
-                            and final_x >= 0 and final_y >= 0 and final_x < n_camps_x and final_y < n_camps_y and \
-                            xx_1 * yy_1 == 0:
-                            cultiu_vei = mapa_copy.camps[final_x][final_y]
-                            cultiu_vei.plagar()"""
+                        if xx_1 * yy_1 == 0 \
+                            and final_x >= 0 and final_y >= 0 and final_x < n_camps_x and final_y < n_camps_y:
+                            lista_de_puntos_a_plagar.append((final_x, final_y))
     
     render_Map(map_camps)
+
+    for pap in lista_de_puntos_a_plagar:
+        x = pap[0]; y = pap[1]
+        mapa['camps'][x][y].plagar()
 
     #map_camps = mapa_copy
 
