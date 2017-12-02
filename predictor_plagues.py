@@ -23,15 +23,26 @@ class cultiu():
         self.n_x = n_x
         self.n_y = n_y
 
+        num_row_mod = y % 3
+        if num_row_mod == 0:
+            self.color_to_fill = greenP
+        elif num_row_mod == 1:
+            self.color_to_fill = green_chartreuse
+        else:
+            self.color_to_fill = green2
+
 class mapa_camps():
     global pygame
-    def __init__(self, camps, width_square = 40):
+    def __init__(self, camps, camps_x, camps_y, width_square = 40):
         
+        files_canal_ppal = 2 # quants requadres ocupa el canal ppal
+        files_desaigue_ppal = 2
         self.x = 0
         self.y = 0
+        self.camps = camps
         pygame.init()
-        self.size_x = len(camps) * 2 * width_square
-        self.size_y = len(camps[0]) * 2 * width_square
+        self.size_x = camps_x * 2 * width_square
+        self.size_y = (camps_y * 2 + files_canal_ppal + files_desaigue_ppal) * width_square
         self.width_square = width_square
         self.eff_sq_wdth = self.width_square - 3
         self.screen = pygame.display.set_mode((self.size_x, self.size_y))
@@ -42,21 +53,18 @@ class mapa_camps():
     def pinta_camps_de_verd(self):
         global pygame
         Ty = Tx = 0
-        for i in range(1, self.size_x, self.width_square):
-            for j in range(1, self.size_y, self.width_square):
-                num_row = (j-1) // (self.width_square * 2)
-                num_row_mod = num_row % 3
-                if num_row_mod == 0:
-                    color_to_fill = greenP
-                elif num_row_mod == 1:
-                    color_to_fill = green_chartreuse
-                else:
-                    color_to_fill = green2
+        i = 1
+        for i_camp in self.camps: #range(1, self.size_x, self.width_square):
+            j = 1
+            for j_camp in i_camp: #range(1, self.size_y, self.width_square):
+                
 
-                self.pinta_quadrat_color(color_to_fill, i, j)
-                Ty += 1
-            Tx += 1
-            Ty = 0
+                x, y = self.get_x_coord_camp(j_camp, 0, 0)
+                self.pinta_camp_color(j_camp, j_camp.color_to_fill)
+                #self.pinta_quadrat_color(color_to_fill, x, y)
+
+                j += self.width_square
+            i += self.width_square
 
     def pinta_quadrat_color(self, color, x, y):
         #print "x = "+str(x)
@@ -65,17 +73,20 @@ class mapa_camps():
         pygame.draw.rect(self.screen, color, [x, y, self.eff_sq_wdth, self.eff_sq_wdth], 0)
 
     def get_x_coord_camp(self, camp, offset_x, offset_y):
-        return ( (camp.x * 2 + offset_x ) * self.width_square +1 , (camp.y * 2 + offset_y ) * self.width_square +1 )
+        return ( ( camp.x * 2 + offset_x ) * self.width_square +1 , ( ( camp.y + 1) * 2 + offset_y ) * self.width_square +1 )
+
+    def pinta_camp_color(self, camp, color):
+        x,y = self.get_x_coord_camp(camp, 0, 0)
+        self.pinta_quadrat_color(color, x, y)
+        x,y = self.get_x_coord_camp(camp, 0, 1)
+        self.pinta_quadrat_color(color, x, y)
+        x,y = self.get_x_coord_camp(camp, 1, 0)
+        self.pinta_quadrat_color(color, x, y)
+        x,y = self.get_x_coord_camp(camp, 1, 1)
+        self.pinta_quadrat_color(color, x, y)        
 
     def pinta_camp_plagat(self, camp):
-        x,y = self.get_x_coord_camp(camp, 0, 0)
-        self.pinta_quadrat_color(GREY, x, y)
-        x,y = self.get_x_coord_camp(camp, 0, 1)
-        self.pinta_quadrat_color(GREY, x, y)
-        x,y = self.get_x_coord_camp(camp, 1, 0)
-        self.pinta_quadrat_color(GREY, x, y)
-        x,y = self.get_x_coord_camp(camp, 1, 1)
-        self.pinta_quadrat_color(GREY, x, y)
+        self.pinta_camp_color(camp, GREY)
 
     def pinta_canals(self):
         pass
@@ -92,7 +103,7 @@ mapa = {
 }
 
 n_camps_x = 6
-n_camps_y = 6
+n_camps_y = 5
 
 for i in range(0, n_camps_x):
     array = []
@@ -117,7 +128,7 @@ while not quit:
         if event.type == pygame.QUIT:
             quit = True
 
-    camp = mapa_camps(mapa['camps'])
+    camp = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
 
     camp.screen.fill(BLACK)
 
