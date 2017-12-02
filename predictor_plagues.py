@@ -1,6 +1,7 @@
 import pygame
 import random
 
+from Tkinter import Tk
 
 blueP = (20, 34, 238)
 greenP = (20, 240, 50)
@@ -10,6 +11,7 @@ redP = (230, 0, 20)
 BLACK = (0, 0, 0)
 GREY = (30, 30, 30)
 sizeSquare = 40
+WHITE = (255, 255, 255)
 
 x = 0
 y = 0
@@ -36,7 +38,7 @@ class mapa_camps():
     def __init__(self, camps, camps_x, camps_y, width_square = 40):
         
         self.files_canal_ppal = 2 # quants requadres ocupa el canal ppal
-        self.files_desaigue_ppal = 2
+        self.files_desaigue_ppal = 0
         self.camps_x = camps_x
         self.camps_y = camps_y
         self.camps = camps
@@ -72,7 +74,7 @@ class mapa_camps():
         pygame.draw.rect(self.screen, color, [x, y, self.eff_sq_wdth, self.eff_sq_wdth], 0)
 
     def get_x_coord_camp(self, camp, offset_x, offset_y):
-        return ( ( camp.x * 2 + offset_x ) * self.width_square +1 , ( ( camp.y + 1) * 2 + offset_y ) * self.width_square +1 )
+        return ( ( camp.x * 2 + offset_x ) * self.width_square , ( ( camp.y + 1) * 2 + offset_y ) * self.width_square )
 
     def pinta_camp_color(self, camp, color):
         x,y = self.get_x_coord_camp(camp, 0, 0)
@@ -90,7 +92,10 @@ class mapa_camps():
     def pinta_canals(self):
         for i in range(self.camps_x*2):
             self.pinta_quadrat_color(blueP, self.width_square * i, 0)
+            self.screen.blit(pygame.font.Font(None, 32).render("==>", True, WHITE), [self.width_square * i, 0])
             self.pinta_quadrat_color(blueP, self.width_square * i, self.width_square)
+            self.screen.blit(pygame.font.Font(None, 32).render("==>", True, WHITE), [self.width_square * i, self.width_square ])
+
 
 
 # EXAMPLE TAKEN FROM:
@@ -113,36 +118,32 @@ for i in range(0, n_camps_x):
         nou_cultiu = cultiu(i, j)
         array.append(nou_cultiu)
 
+#while not quit:
 
-class camp():
-    def __init__(self):
-        self.att = 0
+#   for event in pygame.event.get():
+#      if event.type == pygame.QUIT:
+#         quit = True
 
-def init_camps():
-    pass
+camp = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
 
+camp.screen.fill(BLACK)
 
+camp.pinta_camps_de_verd()
 
-while not quit:
+camp.pinta_camp_plagat(mapa['camps'][2][3])
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            quit = True
+camp.pinta_canals()
 
-    camp = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
+#camp.pinta_canals()
 
-    camp.screen.fill(BLACK)
+colAl = (random.randrange(1, 255), random.randrange(1, 255), random.randrange(1, 255))
+#pygame.draw.rect(screen, colAl, [x, y, 38, 38], 0)
+pygame.display.flip()
+#clock.tick(5)
 
-    camp.pinta_camps_de_verd()
+window = Tk()
+window.geometry("266x208")
+window.title("Casos de prova")
+window.mainloop()
 
-    camp.pinta_camp_plagat(mapa['camps'][2][3])
-
-    camp.pinta_canals()
-
-    #camp.pinta_canals()
-
-    colAl = (random.randrange(1, 255), random.randrange(1, 255), random.randrange(1, 255))
-    #pygame.draw.rect(screen, colAl, [x, y, 38, 38], 0)
-    pygame.display.flip()
-    #clock.tick(5)
-pygame.quit()
+#pygame.quit()
