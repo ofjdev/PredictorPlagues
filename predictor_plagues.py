@@ -1,5 +1,6 @@
 import pygame
 import random
+import copy
 
 from Tkinter import Tk
 from Tkinter import Button
@@ -19,12 +20,17 @@ y = 0
 pygame.init()
 quit = False
 
+ciclos_plaga = 10
+
 class cultiu():
     def __init__(self, x, y, n_x = 2, n_y = 2):
         self.x = x
         self.y = y
         self.n_x = n_x
         self.n_y = n_y
+
+        self.contador_plaga = 0
+        self.cultiu_plagat = False
 
         num_row_mod = y % 3
         if num_row_mod == 0:
@@ -33,6 +39,16 @@ class cultiu():
             self.color_to_fill = green_chartreuse
         else:
             self.color_to_fill = green2
+
+    def plagar(self):
+        self.contador_plaga = 10
+        self.cultiu_plagat = True
+        self.color_to_fill = GREY
+
+    def incr_ciclo_plaga_vecina(self, ciclos):
+        self.contador_plaga += ciclos
+        if self.contador_plaga == ciclos_plaga:
+            self.plagar()
 
 class mapa_camps():
     global pygame
@@ -50,7 +66,7 @@ class mapa_camps():
         self.eff_sq_wdth = self.width_square - 3
         self.screen = pygame.display.set_mode((self.size_x, self.size_y))
         pygame.display.set_caption("Predictor de Plagues: Cargol Poma")
-        self.clock = pygame.time.Clock()
+
 
 
     def pinta_camps_de_verd(self):
@@ -109,8 +125,8 @@ mapa = {
     'rius': []
 }
 
-n_camps_x = 6
-n_camps_y = 5
+n_camps_x = 8
+n_camps_y = 7
 
 for i in range(0, n_camps_x):
     array = []
@@ -138,8 +154,8 @@ def render_Map(camp):
 #      if event.type == pygame.QUIT:
 #         quit = True
 
-mapa_camps = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
-render_Map(mapa_camps)
+map_camps = mapa_camps(mapa['camps'], n_camps_x, n_camps_y)
+render_Map(map_camps)
 
 window_control = Tk()
 window_control.geometry("266x208")
@@ -148,20 +164,69 @@ window_control.title("Casos de prova")
 def new_random(max):
     return int(random.random() * max)
 
+def expandeix_plaga_1_cicle():
+    # de moment s'expandeix per terra
+    pass
+
+
+plaga_iniciada = False
+
 def event_inici_plaga():
 
-    x = new_random(n_camps_x)
-    y = new_random(n_camps_y)
+    global map_camps
+    global plaga_iniciada
+    if not plaga_iniciada:
+        x = new_random(n_camps_x)
+        y = new_random(n_camps_y)
 
-    mapa['camps'][x][y].color_to_fill = GREY
-    
-    render_Map(mapa_camps)
+        cultiu = mapa['camps'][x][y]
+        cultiu.plagar()
 
-    #mapa_camps.pinta_camp_plagat(mapa['camps'][x][y])
-    
-    pygame.display.flip()
+        render_Map(map_camps)
+
+        pygame.display.flip()
+
+    plaga_iniciada = True
 
 b = Button(window_control, text="Inici Plaga", command=event_inici_plaga)
+b.pack()
+
+def event_incr_cicle():
+
+    global map_camps
+    #mapa_copy = copy.deepcopy(map_camps)
+
+    for x in range(n_camps_x):
+        for y in range(n_camps_y):
+            cultiu = mapa['camps'][x][y]
+            cultiu_plagat = cultiu.cultiu_plagat
+            if cultiu_plagat:
+                pass
+                """for xx in range(3):
+                    
+                    for yy in range(3):
+                        xx_1 = xx - 1
+                        yy_1 = yy - 1
+                        final_x = x + xx_1
+                        final_y = y + yy_1
+                        # center
+                        # out of bounds
+                        # 
+                        if xx_1 + yy_1 > 0 \
+                            and final_x >= 0 and final_y >= 0 and final_x < n_camps_x and final_y < n_camps_y and \
+                            xx_1 * yy_1 == 0:
+                            cultiu_vei = mapa_copy.camps[final_x][final_y]
+                            cultiu_vei.plagar()"""
+    
+    render_Map(map_camps)
+
+    #map_camps = mapa_copy
+
+    pygame.display.flip()
+
+    
+
+b = Button(window_control, text="Passa un dia", command=event_incr_cicle)
 b.pack()
 
 window_control.mainloop()
